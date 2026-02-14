@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sambalentine 💘</title>
+  <style>
+    :root{
+      --bg1:#120018;
+      --bg2:#3b0033;
+      --card:#ffffff10;
+      --card2:#ffffff18;
+      --text:#fff;
+      --muted:#ffd6ea;
+      --yes1:#ff3d7f;
+      --yes2:#ff7aa8;
+      --no1:#3a3a3a;
+      --no2:#222;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, #ff2e7a30, transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, #ff70b530, transparent 65%),
+        radial-gradient(900px 700px at 50% 90%, #ffb0d530, transparent 60%),
+        linear-gradient(160deg,var(--bg1),var(--bg2));
+    }
+
+    /* corazones flotando de fondo */
+    .hearts-bg{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+      z-index:0;
+    }
+    .bg-heart{
+      position:absolute;
+      opacity:.18;
+      transform: translateY(110vh) scale(var(--s));
+      animation: floatUp var(--d) linear infinite;
+      will-change: transform;
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(110vh) translateX(0) rotate(0deg) scale(var(--s)); }
+      to{ transform: translateY(-140px) translateX(var(--x)) rotate(360deg) scale(var(--s)); }
+    }
+
+    .wrap{
+      position:relative;
+      width:min(720px, 92vw);
+      margin: 7vh auto 0;
+      padding: 22px;
+      z-index:1;
+    }
+
+    .card{
+      position:relative;
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .glow{
+      position:absolute; inset:-60px;
+      background:
+        radial-gradient(300px 240px at 15% 20%, rgba(255,61,127,.35), transparent 60%),
+        radial-gradient(340px 260px at 85% 10%, rgba(255,122,168,.28), transparent 62%),
+        radial-gradient(420px 320px at 50% 95%, rgba(255,200,220,.18), transparent 65%);
+      filter: blur(8px);
+      pointer-events:none;
+    }
+
+    .content{
+      position:relative;
+      padding: 34px 26px 26px;
+      text-align:center;
+    }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(26px, 4vw, 40px);
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: clamp(14px, 2.2vw, 17px);
+      line-height:1.35;
+    }
+
+    /* ICONO CORAZÓN (late) */
+    .heart-icon{
+      font-size: 92px;
+      line-height: 1;
+      display:inline-block;
+      margin: 8px auto 16px;
+      filter: drop-shadow(0 16px 20px rgba(0,0,0,.35));
+      animation: beat 1.05s ease-in-out infinite;
+      transform-origin: 50% 60%;
+      user-select:none;
+    }
+    @keyframes beat{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.18); }
+    }
+
+    .buttons{
+      display:flex;
+      gap: 14px;
+      justify-content:center;
+      flex-wrap:wrap;
+      padding: 10px 0 6px;
+      position:relative;
+      min-height: 72px;
+      z-index:2;
+    }
+
+    .btn{
+      border:0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      box-shadow: 0 14px 26px rgba(0,0,0,.28);
+      position: relative;
+      overflow:hidden;
+      min-width: 150px;
+    }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+
+    .btn-yes{
+      background: linear-gradient(180deg, var(--yes1), var(--yes2));
+      color:#fff;
+    }
+    .btn-yes:hover{ filter: brightness(1.05); }
+
+    /* NO: arranca al lado del Sí (derecha) y luego se escapa */
+    .btn-no{
+      background: linear-gradient(180deg, var(--no1), var(--no2));
+      color:#fff;
+      position: fixed;
+      z-index: 4;
+    }
+
+    .hint{
+      margin-top: 10px;
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+    }
+
+    .footer{
+      padding: 0 26px 26px;
+      text-align:center;
+      color: rgba(255,255,255,.75);
+      font-size: 12px;
+    }
+
+    /* OVERLAY COMPLETO */
+    .overlay{
+      position:fixed; inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 22px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .25s ease;
+      z-index: 10;
+      background: rgba(10,0,12,.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .overlay::before{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background:
+        radial-gradient(700px 420px at 50% 40%, rgba(255,61,127,.25), transparent 60%),
+        radial-gradient(800px 500px at 55% 65%, rgba(255,180,210,.16), transparent 65%);
+      pointer-events:none;
+    }
+
+    .modal{
+      width:min(780px, 94vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10));
+      border:1px solid rgba(255,255,255,.22);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 26px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      z-index: 11;
+    }
+    .modal h2{
+      margin:0 0 6px;
+      font-size: clamp(22px, 3.6vw, 36px);
+    }
+    .modal p{
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: clamp(14px, 2.2vw, 17px);
+    }
+    .modal .close{
+      margin-top: 6px;
+      background: linear-gradient(180deg, #ffffff25, #ffffff14);
+      color:#fff;
+      min-width: 170px;
+    }
+
+    /* “explosión” mini de corazones */
+    .burst{
+      position:absolute;
+      left:50%;
+      top:45%;
+      width: 0;
+      height: 0;
+      pointer-events:none;
+    }
+    .burst .p{
+      position:absolute;
+      transform: translate(-50%,-50%);
+      animation: pop 1100ms ease-out forwards;
+      will-change: transform, opacity;
+      opacity: 0;
+      font-size: 18px;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,.35));
+    }
+    @keyframes pop{
+      0%{ opacity:0; transform: translate(-50%,-50%) scale(.4); }
+      10%{ opacity:1; }
+      100%{ opacity:0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.35) rotate(var(--r)); }
+    }
+
+    canvas#confetti{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index: 12;
+    }
+
+    .shake{ animation: shake 520ms ease-in-out 1; }
+    @keyframes shake{
+      0%{ transform: translate(0,0); }
+      20%{ transform: translate(-8px, 5px); }
+      40%{ transform: translate(8px, -5px); }
+      60%{ transform: translate(-7px, -4px); }
+      80%{ transform: translate(7px, 4px); }
+      100%{ transform: translate(0,0); }
+    }
+
+    .rain{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index: 13;
+      overflow:hidden;
+    }
+    .rain .rheart{
+      position:absolute;
+      top:-40px;
+      animation: fall linear forwards;
+      opacity:.98;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,.25));
+    }
+    @keyframes fall{
+      to{
+        transform: translateY(calc(100vh + 80px)) rotate(420deg);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width:420px){
+      .btn{ width: 160px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts-bg" id="heartsBg" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <section class="card" id="card">
+      <div class="glow"></div>
+      <div class="content">
+        <div class="heart-icon" aria-hidden="true">💖</div>
+
+        <h1>¿Quieres ser mi San Valentin?</h1>
+        <p class="subtitle">
+          Prometo risas, abrazos, y muchos besitos.
+
+        </p>
+
+        <div class="buttons" id="btnZone">
+          <button class="btn btn-yes" id="yesBtn">Sí 💘</button>
+          <!-- NO va fuera para moverse por pantalla, pero visualmente arranca al lado -->
+        </div>
+
+
+      </div>
+      <div class="footer">Hecho con amor por Aaron.</div>
+    </section>
+  </main>
+
+  <!-- Botón NO por toda la pantalla -->
+  <button class="btn btn-no" id="noBtn">No 🙅‍♂️</button>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Celebración">
+    <div class="modal" id="modal">
+      <div class="burst" id="burst"></div>
+      <h2 id="finalTitle">Micaela, saldremos mañana💞</h2>
+      <p>AAAAAAAAA 💘💘💘 (ya es oficial)</p>
+      <button class="btn close" id="closeBtn">Cerrar</button>
+    </div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+  <div class="rain" id="rain"></div>
+
+<script>
+  // ============
+  // Utilidades
+  // ============
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  // ============
+  // Fondo corazones
+  // ============
+  const heartsBg = document.getElementById('heartsBg');
+  const bgCount = 18;
+
+  function makeBgHeart(){
+    const el = document.createElement('div');
+    el.className = 'bg-heart';
+    el.textContent = Math.random() < 0.45 ? '❤' : (Math.random() < 0.7 ? '💖' : '💘');
+    const s = rand(0.8, 2.4);
+    const d = rand(8, 16);
+    const x = rand(-80, 80);
+    el.style.left = rand(0, 100) + 'vw';
+    el.style.setProperty('--s', s.toFixed(2));
+    el.style.setProperty('--d', d.toFixed(2) + 's');
+    el.style.setProperty('--x', x.toFixed(0) + 'px');
+    el.style.fontSize = rand(18, 48) + 'px';
+    el.style.animationDelay = (-rand(0, d)).toFixed(2) + 's';
+    heartsBg.appendChild(el);
+  }
+  for(let i=0;i<bgCount;i++) makeBgHeart();
+
+  // ============
+  // Botón NO: empieza al lado del Sí, luego huye por toda la pantalla
+  // ============
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+  const card = document.getElementById('card');
+  const overlay = document.getElementById('overlay');
+
+  function placeNoNextToYes(){
+    const y = yesBtn.getBoundingClientRect();
+    const pad = 10;
+
+    // Coloca NO a la derecha del Sí (visual “lado a lado”)
+    let left = y.right + pad;
+    let top = y.top;
+
+    // si se sale, baja un poco
+    if (left + noBtn.offsetWidth > window.innerWidth - 10){
+      left = window.innerWidth - noBtn.offsetWidth - 10;
+      top = y.bottom + 10;
+    }
+
+    noBtn.style.left = clamp(left, 10, window.innerWidth - noBtn.offsetWidth - 10) + 'px';
+    noBtn.style.top  = clamp(top, 10, window.innerHeight - noBtn.offsetHeight - 10) + 'px';
+  }
+
+  function moveNoAway(){
+    if (overlay.classList.contains('show')) return;
+
+    const pad = 12;
+    const w = noBtn.offsetWidth;
+    const h = noBtn.offsetHeight;
+    const yesRect = yesBtn.getBoundingClientRect();
+
+    let tries = 0;
+    let x, y;
+    do{
+      x = rand(pad, window.innerWidth - w - pad);
+      y = rand(pad, window.innerHeight - h - pad);
+
+      const noRect = { left: x, top: y, right: x + w, bottom: y + h };
+      const overlap =
+        !(noRect.right < yesRect.left - 16 ||
+          noRect.left > yesRect.right + 16 ||
+          noRect.bottom < yesRect.top - 16 ||
+          noRect.top > yesRect.bottom + 16);
+
+      if(!overlap) break;
+      tries++;
+    } while(tries < 40);
+
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+
+    noBtn.animate(
+      [{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }],
+      { duration: 170, easing: 'ease-out' }
+    );
+  }
+
+  // esquiva
+  ['pointerdown','mouseenter','touchstart'].forEach(ev =>
+    noBtn.addEventListener(ev, (e) => {
+      e.preventDefault?.();
+      moveNoAway();
+    }, { passive:false })
+  );
+  noBtn.addEventListener('click', (e) => { e.preventDefault(); moveNoAway(); });
+
+  function onLayout(){
+    // reubica al lado del sí siempre que el overlay no esté abierto
+    if (!overlay.classList.contains('show')) placeNoNextToYes();
+  }
+
+  window.addEventListener('load', () => setTimeout(onLayout, 50));
+  window.addEventListener('resize', () => setTimeout(onLayout, 30));
+
+  // ============
+  // Celebración al decir SÍ (CONFETI EXAGERADO)
+  // ============
+  const closeBtn = document.getElementById('closeBtn');
+  const burst = document.getElementById('burst');
+  const rain = document.getElementById('rain');
+
+  yesBtn.addEventListener('click', () => {
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+
+    overlay.classList.add('show');
+
+    // explosión de corazones
+    burst.innerHTML = '';
+    for(let i=0;i<40;i++){
+      const p = document.createElement('div');
+      p.className = 'p';
+      p.textContent = (Math.random()<0.55) ? '💖' : (Math.random()<0.5 ? '❤' : '💘');
+      p.style.setProperty('--dx', rand(-320, 320).toFixed(0) + 'px');
+      p.style.setProperty('--dy', rand(-240, 240).toFixed(0) + 'px');
+      p.style.setProperty('--r', rand(-220, 220).toFixed(0) + 'deg');
+      p.style.fontSize = rand(18, 40).toFixed(0) + 'px';
+      p.style.animationDelay = (rand(0, 220)).toFixed(0) + 'ms';
+      burst.appendChild(p);
+    }
+
+    // CONFETI EXAGERADO
+    startConfettiMega(2600);     // más tiempo
+    startSideCannons(18);        // chorros laterales
+    startHeartRain(120);         // más corazones
+
+    if (navigator.vibrate) navigator.vibrate([70, 40, 70]);
+  });
+
+  closeBtn.addEventListener('click', () => {
+    overlay.classList.remove('show');
+    // vuelve a poner el NO al lado del sí cuando se cierra
+    setTimeout(onLayout, 50);
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if(e.target === overlay){
+      overlay.classList.remove('show');
+      setTimeout(onLayout, 50);
+    }
+  });
+
+  // ============
+  // Lluvia de corazones
+  // ============
+  function startHeartRain(count){
+    rain.innerHTML = '';
+    for(let i=0;i<count;i++){
+      const h = document.createElement('div');
+      h.className = 'rheart';
+      h.textContent = Math.random() < 0.55 ? '💖' : (Math.random()<0.5 ? '❤' : '💘');
+      h.style.left = rand(0, 100).toFixed(2) + 'vw';
+      h.style.fontSize = rand(14, 42).toFixed(0) + 'px';
+      const dur = rand(2.2, 6.0);
+      h.style.animationDuration = dur.toFixed(2) + 's';
+      h.style.animationDelay = rand(0, 1.3).toFixed(2) + 's';
+      h.style.transform = `translateY(-40px) rotate(${rand(-60,60).toFixed(0)}deg)`;
+      rain.appendChild(h);
+    }
+    setTimeout(() => { rain.innerHTML = ''; }, 9000);
+  }
+
+  // ============
+  // Confetti Mega (más partículas + hues variados)
+  // ============
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth * devicePixelRatio;
+    canvas.height = window.innerHeight * devicePixelRatio;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  let confettiTimer = null;
+  let confettis = [];
+  let confettiEndAt = 0;
+
+  function startConfettiMega(ms){
+    clearInterval(confettiTimer);
+    confettiEndAt = performance.now() + ms;
+
+    // MUCHAS partículas
+    confettis = Array.from({length: 520}, () => makeConfetti(0));
+
+    confettiTimer = setInterval(() => {
+      tickConfetti();
+      if(performance.now() > confettiEndAt){
+        clearInterval(confettiTimer);
+        confettiTimer = null;
+        setTimeout(() => { confettis = []; ctx.clearRect(0,0,canvas.width,canvas.height); }, 1100);
+      }
+    }, 16);
+  }
+
+  function makeConfetti(sourceX){
+    // sourceX: si es 0 => random
+    const fromX = sourceX ? sourceX : rand(0, window.innerWidth);
+    return {
+      x: fromX,
+      y: rand(-40, window.innerHeight * 0.15),
+      r: rand(2, 7),
+      vx: rand(-3.4, 3.4),
+      vy: rand(2.0, 7.6),
+      rot: rand(0, Math.PI*2),
+      vr: rand(-0.35, 0.35),
+      shape: Math.random() < 0.6 ? 'rect' : 'circle',
+      alpha: rand(0.75, 1),
+      hue: rand(300, 20 + 360) % 360 // varios colores
+    };
+  }
+
+  function tickConfetti(){
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+
+    for(const c of confettis){
+      c.x += c.vx;
+      c.y += c.vy;
+      c.vy += 0.035; // gravedad
+      c.rot += c.vr;
+
+      if(c.x < -30) c.x = window.innerWidth + 30;
+      if(c.x > window.innerWidth + 30) c.x = -30;
+
+      ctx.save();
+      ctx.globalAlpha = c.alpha;
+      ctx.translate(c.x, c.y);
+      ctx.rotate(c.rot);
+
+      ctx.fillStyle = `hsl(${c.hue} 92% 62%)`;
+
+      if(c.shape === 'rect'){
+        ctx.fillRect(-c.r, -c.r, c.r*2.6, c.r*1.8);
+      }else{
+        ctx.beginPath();
+        ctx.arc(0,0,c.r,0,Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // reciclar cuando cae (mientras dure)
+      if(c.y > window.innerHeight + 40 && performance.now() < confettiEndAt){
+        c.x = rand(0, window.innerWidth);
+        c.y = rand(-90, -10);
+        c.vx = rand(-3.4, 3.4);
+        c.vy = rand(2.0, 7.0);
+        c.hue = rand(0, 360);
+      }
+    }
+  }
+
+  // ============
+  // Chorros laterales (cannons) -> agregan confetti desde izquierda/derecha
+  // ============
+  function startSideCannons(waves){
+    const start = performance.now();
+    const duration = 1100;
+
+    function wave(){
+      const t = performance.now() - start;
+      if(t > duration) return;
+
+      // izquierda
+      for(let i=0;i<24;i++){
+        const c = makeConfetti(20);
+        c.y = rand(window.innerHeight*0.45, window.innerHeight*0.75);
+        c.vx = rand(3.5, 7.0);
+        c.vy = rand(-6.5, -2.0);
+        confettis.push(c);
+      }
+      // derecha
+      for(let i=0;i<24;i++){
+        const c = makeConfetti(window.innerWidth - 20);
+        c.y = rand(window.innerHeight*0.45, window.innerHeight*0.75);
+        c.vx = rand(-7.0, -3.5);
+        c.vy = rand(-6.5, -2.0);
+        confettis.push(c);
+      }
+
+      // limita tamaño para que no se vaya al infinito
+      if(confettis.length > 900) confettis.splice(0, confettis.length - 900);
+
+      setTimeout(wave, Math.max(40, 1300 / waves));
+    }
+    wave();
+  }
+</script>
+</body>
+</html>
